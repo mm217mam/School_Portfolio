@@ -1,6 +1,6 @@
-## This repo is to demonstrate my abilities in data science from school assignments from undergrad and grad school.  All work is original.
+### This repo is to demonstrate my abilities in data science from school assignments from undergrad and grad school.  All work is original.
 
-## There are 3 folders to demonstrate what I've learned and understand even if I cannot code 100% of this off the top of my head:
+### There are 3 folders to demonstrate what I've learned and understand even if I cannot code 100% of this off the top of my head:
 	 1. Coding_Skills:  
  			Python
 	 		R
