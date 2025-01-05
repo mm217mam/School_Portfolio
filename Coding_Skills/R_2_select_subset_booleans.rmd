@@ -1,0 +1,83 @@
+---
+title: "R_2_select_subset_booleans"
+author: "Mike Montes"
+date: "2024-01-13"
+output: pdf_document
+---
+
+## 1. Load and call data
+```{r warning = FALSE}
+library(readxl)
+SP500 <- read_excel("C:/Users/mmsax/School_Portfolio/Coding_Skills/SP500.xls")
+View(SP500)
+print(SP500)
+```
+
+## 2. Number of rows and columns in dataset using 'dim', 'nrow', & 'ncol'
+## nrow = 1773
+## ncol = 6
+```{r}
+dim(SP500)
+nrow(SP500)
+ncol(SP500)
+```
+
+## 3. Three methods of selecting ' SP500', 'CPI', & 'Rate'
+```{r}
+SP500[ , c('SP500', 'CPI', 'Rate')]
+SP500[ , -which(names(SP500) %in% c('Date', 'Dividend', 'Earnings'))]
+head(subset(SP500, select = -c(Date, Dividend, Earnings)))
+```
+
+## 4. Select rows 10, 100, 500 & 1500
+```{r}
+SP500[c(10, 100, 500, 1500), ]
+```
+
+## 5. Two methods tp select SP500 > 500 or CPI < 100
+```{r}
+SP500[c((SP500$SP500 > 500) | (SP500$CPI < 100)), ]
+
+SP_CPI <- subset(SP500, (SP500 > 500) | (CPI <100))
+print(SP_CPI)
+```
+
+## 6. Two methods to select Earnings > 50 & Rate < 3 only showing columns 'SP500' & "Dividend'
+## () used to print
+```{r message = FALSE, warning = FALSE}
+(Earnings_Rate <-  subset(SP500, (Earnings > 50) & (Rate < 3), select = c(SP500, Dividend)))
+```
+
+## 7.  Remove 'Rate' column
+```{r}
+SP500$Rate <- NULL
+colnames(SP500)
+```
+
+## 8. Add column 'RealPrice' according to given formula
+## There are several ways to do this.  The dataset was received sorted by ascending date, so I'm choosing to use the last entry as the latest CPI.  Alternatively, this value could be chosen by sorting by date and choosing the latest CPI or by choosing the CPI row using a conditional maximum date. 
+```{r}
+SP500$RealPrice <- SP500$SP500 * SP500$CPI / tail(SP500$CPI, 1)
+head(SP500)
+```
+
+## 9. Add column 'RealEarnings' according to given formula
+```{r}
+SP500$RealEarnings <- SP500$Earnings * SP500$CPI / tail(SP500$CPI, 1)
+head(SP500)
+```
+
+## 10. Add column 'PERatio' according to given formula
+```{r}
+SP500$PERatio <- SP500$RealPrice / SP500$RealEarnings
+head(SP500)
+```
+
+
+
+
+
+
+
+
+
