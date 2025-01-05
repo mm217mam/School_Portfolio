@@ -1,0 +1,66 @@
+---
+title: "R_1_upload_viewing_database"
+author: "Mike Montes"
+date: "2025-01-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+### 1 
+library(readxl)
+CarInsurances <- read_excel("C:/Users/mmsax/School_Portfolio/Coding_Skills/CarInsurances.xlsx")
+View(CarInsurances)
+```
+
+```{r}
+### 2 & 3
+dim(CarInsurances)
+nrow(CarInsurances)
+ncol(CarInsurances)
+```
+
+```{r}
+### 4
+first.eight.rows <- head(CarInsurances, 8)
+print(first.eight.rows)
+```
+
+```{r}
+### 5
+five.rows <- tail(CarInsurances, 5)
+(five.rows) # alternate method
+```
+
+```{r}
+### 6
+ls(CarInsurances)
+objects(CarInsurances)
+```
+
+```{r}
+### 7 summary to find means
+summary(CarInsurances)
+```
+
+```{r}
+### 7a mean MRC
+mean(CarInsurances$MRC)
+```
+
+```{r}
+### 7b mean FC
+CarInsurances$FC |> 
+  mean()
+```
+
+```{r}
+### 7a mean AD
+library(dplyr)
+CarInsurances |> 
+  pull(AD) |> 
+  mean()
+```
