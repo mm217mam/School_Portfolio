@@ -1,0 +1,230 @@
+---
+title: "R_5_visuals_ggplot"
+author: "Mike Montes"
+date: "2024-01-19"
+output: pdf_document
+---
+
+```{r setup, include = TRUE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1  Read the dataset in and call it 'loan.' 
+```{r warning = FALSE}
+library(readr)
+loan <- read_csv("C:/Users/mmsax/Downloads/loan.csv")
+head(loan, 5)
+colnames(loan)
+str(loan)
+```
+
+# 2  Plot histogram and density of loan_amnt using basic.
+## Using extra commands to learn them
+```{r}
+?plot
+?hist
+
+### Histogram
+hist(loan$loan_amnt,
+     breaks = 'Sturges',
+     main = 'Distribution of Loan Amount',
+     xlab = 'Amount in $', 
+     ylab = 'Count',
+     xlim = c(0, 40000),
+     ylim = c(0, 1500), 
+     col = 'green', 
+     border = 'blue',
+     labels = TRUE)
+
+### Density
+d <- density(loan$loan_amnt)
+plot(d,
+     col = 'red', 
+     lwd = 2)
+
+### Histogram with density overlaid
+hist(loan$loan_amnt,
+     breaks = 'Sturges',
+     main = 'Distribution of Loan Amount',
+     prob = TRUE,
+     xlab = 'Amount in $', 
+     ylab = 'Count',
+     xlim = c(0, 40000),
+     col = 'green', 
+     border = 'blue')
+# not sure why I can't have y-limit here
+lines(density(loan$loan_amnt),
+      lwd = 2,
+      col = 'red')
+```
+
+# 3  Histogram and density of loan_amnt with vertical line for mean using ggplot2.
+```{r warning = FALSE}
+?linetype
+
+library(ggplot2)
+
+ggplot(data = loan,
+       aes(x = loan_amnt)) +
+  geom_histogram(aes(y = ..density..), 
+                 color = 'black', 
+                 fill = 'yellow') +
+  geom_density(alpha = 0.2, 
+               fill = 'orange') + 
+  geom_vline(aes(xintercept = mean(loan_amnt)),
+             color = 'red',
+             linetype = 3, 
+             size = 1.5) +
+  ggtitle('Distribution of Loan Amount') + 
+  xlab('Amount in $') +
+  ylab('Count')
+
+# I tried to label mean line but couldn't.
+#ggplot(df, aes(x=x, y=y)) +
+#geom_point() +
+ # geom_vline(xintercept=10) +
+  #annotate("text", x=9, y=20, label="Some text", angle=90, size=15, color="blue")
+```
+
+# 4  The scatter plot of loan_amnt (y-axis) vs. annual_inc (x-axis) + the trend line using basic graphics.
+```{r}
+?plot
+
+plot(loan$annual_inc, loan$loan_amnt,
+     main = 'Scatterplot of Annual Income vs. Loan Amount',
+     xlab = 'Annual Income in $',
+     ylab = "Loan Amount in $",
+     xlim = c(0, 2000000),
+     ylim = c(0, 35000),
+     pch = 20,
+     cex = 0.6)
+abline(lm(loan_amnt ~ annual_inc,
+          data = loan),
+       lwd = 4, 
+       col = 'blue3')
+
+# X-axis zoomed 4x
+plot(loan$annual_inc, loan$loan_amnt,
+     main = 'Scatterplot of Annual Income vs. Loan Amount',
+     xlab = 'Annual Income in $',
+     ylab = "Loan Amount in $",
+     xlim = c(0, 500000),
+     ylim = c(0, 35000),
+     pch = 20,
+     col = 'darkslategrey',
+     cex = 0.6)
+abline(lm(loan_amnt ~ annual_inc,
+          data = loan),
+       lwd = 4, 
+       col = 'blue3')
+```
+
+# 5  Scatter plot of loan_amnt vs.annual_inc with trend line using ggplot2.
+```{r}
+ggplot(data = loan,
+       aes(x = annual_inc, y = loan_amnt)) +
+  geom_point() + 
+  geom_smooth()
+
+# come back and add to parameters and make a new graph removing the outliers
+```
+
+# 6  Barplot of term and grade on the same barplot using basic.
+```{r}
+# determine if term and grade are numericals
+str(loan) 
+loan$term <- as.factor(loan$term)
+loan$grade <- as.factor((loan$grade))
+
+# determine number of levels to create colors list
+levels(loan$term)
+levels(loan$grade)
+
+# Grade on x-axis
+freq_table_term_grade <- xtabs(~ term + grade,
+                               data = loan)
+barplot(freq_table_term_grade,
+        main = 'Cross Table of Term & Grade',
+        legend = rownames(freq_table_term_grade),
+        col = c('blue', 'green'),
+        ylim = c(0, 3500))
+
+barplot(freq_table_term_grade,
+        main = 'Cross Table of Term & Grade',
+        legend = rownames(freq_table_term_grade),
+        col = c('blue', 'green'), 
+        beside = TRUE,
+        ylim = c(0, 3000))
+
+# Term on x-axis
+freq_table_term_grade_2 <- xtabs(~ grade + term,
+                               data = loan)
+
+barplot(freq_table_term_grade_2,
+        main = 'Cross Table of Term & Grade',
+        legend = rownames(freq_table_term_grade),
+        col = c('blue', 'green', 'red', 'pink', 'yellow', 'purple', 'orange'),
+        ylim = c(0, 7000))
+
+barplot(freq_table_term_grade_2,
+        main = 'Cross Table of Term & Grade',
+        legend = rownames(freq_table_term_grade),
+        col = c('blue', 'green', 'red', 'pink', 'yellow', 'purple', 'orange'), 
+        beside = TRUE,
+        ylim = c(0, 3000))
+```
+
+# 7  Barplot of term and grade on the same barplot using ggplot2
+```{r}
+# By term
+ggplot(data = loan,
+       aes(x = term, y = ..count..)) +
+  geom_bar(aes(fill = grade))
+
+ggplot(data = loan,
+       aes(x = term, y = ..count..)) +
+  geom_bar(aes(fill = grade),
+           position = 'dodge')
+
+# By grade
+ggplot(data = loan,
+       aes(x = grade, y = ..count..)) +
+  geom_bar(aes(fill = term))
+
+ggplot(data = loan,
+       aes(x = grade, y = ..count..)) +
+  geom_bar(aes(fill = term),
+           position = 'dodge')
+```
+
+# 8  Boxplot loan_amnt vs.term and save as 'loanterm.jpg' using basic graphics.
+```{r}
+jpeg("C:\\Users\\mmsax\\Desktop\\_MU\\GDSCI_502_R\\Week05\\loanterm.jpg")
+
+boxplot(loan_amnt ~ term, 
+        data = loan,
+        notch = TRUE,
+        col = c('blue'),
+        main = 'Loan Amount by Term',
+        xlab = 'Term',
+        ylim = c(0, 35000))
+
+dev.off()
+```
+
+# 9  Boxplot loan_amnt vs.term and save as 'loanterm.jpg' using ggplot2. 
+# State differences between loan amount with respect to term.
+```{r}
+ggplot(data = loan, 
+       aes(x = term, 
+           y = loan_amnt)) +
+  geom_boxplot(aes(col = term), 
+               notch = TRUE) +
+  ggtitle('Loan Amount vs. Term') +
+  xlab('Term Length in Months') +
+  ylab('Loan Amount in $') 
+
+ggsave("C:\\Users\\mmsax\\OneDrive\\Desktop\\_MU\\_GDSCI_502_R\\Week05\\loanterm2.jpg", width = 20, height = 15, units = "cm")
+
+print('There is a significant diffence between the average as well as the inner two quartiles of loan amounts between loan length terms of 36 and 60 months.')
+```
