@@ -1,0 +1,134 @@
+---
+title: "R_4_categoricals_stats"
+author: "Mike Montes"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+## 1. Load and call dataset
+```{r}
+library(readr)
+loan <- read_csv("C:/Users/mmsax/School_Portfolio/Coding_Skills/loan.csv")
+head(loan, 2)
+```
+
+## 2. Show continuous & categorical variables in the dataset.
+### I made this a little fancier to practice.
+### I could have switched all the characters to factors here, but I reserved not doing it yet.  I realize that integers and logicals could be included in !numeric.
+```{r}
+categoricals <- sapply(loan, class) != 'numeric'
+cat_names <-  names(loan[categoricals])
+print('The categorical variables are:')
+print(cat_names)
+
+numericals <- sapply(loan, class) == 'numeric'
+num_names <- names(loan[numericals])
+print('The numerical variables are:')
+print(num_names)
+```
+
+## 3.  Calculate the minimum, maximum, mean, median, standard deviation and three quartiles (25th, 50th and 75th percentiles) of loan_amnt.
+### I practiced old and new commands.
+### I could have done the quartiles separately, but I wanted to put them together without using a loop so I had to learn 'collapse' so the 2nd and 3rd values wouldn't get cut off
+
+### The boring method is first but is always useful
+```{r}
+(summary(loan$loan_amnt))
+
+print(paste('The minimum loan_amount value is: $', (min(loan$loan_amnt))))
+print(paste('The maximum loan_amount value is: $', (max(loan$loan_amnt))))
+print(paste('The mean loan_amount value is: $', round(mean(loan$loan_amnt), 2)))
+print(paste('The median loan_amount value is: $', (median(loan$loan_amnt))))
+print(paste('The standard deviation of the loan_amount values is: $', round(sd(loan$loan_amnt), 2)))
+# I could have done these separately, but I wanted to put them together without using a
+# loop so I had to learn 'collapse' so the 2nd and 3rd values wouldn't get cut off
+print(paste('The 25th, 50th and 75th percentiles of the loan_amount values are: $', 
+            paste(quantile(loan$loan_amnt, probs = c(0.25, 0.5, 0.75)), collapse = ", ")))
+```
+
+
+## 4.  Calculate the minimum, maximum, mean, median, standard deviation and three quartiles (25th, 50th and 75th percentiles) of int_rate.
+```{r}
+(summary(loan$int_rate))
+
+# Practicing old and new commands:
+print(paste('The minimum int_rate value is: $', (min(loan$int_rate))))
+print(paste('The maximum int_rate value is: $', (max(loan$int_rate))))
+print(paste('The mean int_rate value is: $', round(mean(loan$int_rate), 2)))
+print(paste('The median int_rate value is: $', (median(loan$int_rate))))
+print(paste('The standard deviation of the int_rate values is: $', round(sd(loan$int_rate), 2)))
+
+print(paste('The 25th, 50th and 75th percentiles of the int_rate values are: $', 
+            paste(quantile(loan$int_rate, probs = c(0.25, 0.5, 0.75)), collapse = ", ")))
+
+```
+
+## 5.  Calculate the correlation coefficient of int_rate and installment and detemine if they have a strong relationship.
+```{r}
+print(paste('The correlation between int_rate and installment is:', round(cor(loan$int_rate, loan$installment), 5)))
+print("This is a very low correlation value, so they do not have a strong relationship")
+
+```
+
+## 6.  Frequency table and mode of term.
+```{r}
+is.factor(loan$term)
+class(loan$term)
+loan$term <-  as.factor(loan$term)
+is.factor(loan$term)
+levels(loan$term)
+
+print('The frequency table for loan$term:')
+print(table(loan$term))
+
+print(paste('The mode of term is:', names(sort(table(loan$term), decreasing = TRUE))[1]))
+```
+
+## 7. The proportion table and mode of loan_status.
+```{r}
+is.factor(loan$loan_status)
+class(loan$loan_status)
+loan$loan_status <-  as.factor(loan$loan_status)
+is.factor(loan$loan_status)
+levels(loan$loan_status)
+
+print('The proportion table for loan$status:')
+print(proportions((table((loan$loan_status)))))
+
+  print(paste('The mode of loan_status is:', names(sort(table(loan$loan_status), decreasing = TRUE))[1]))
+
+```
+
+## 8. The cross table of term and loan_status and proportions by row and column respectively.
+```{r}
+xtabs(~term + loan_status, data = loan)
+
+print('Proportion table by row')
+prop.table((xtabs(~term + loan_status, data = loan)), margin = 1)
+
+print('Proportion table by column')
+prop.table((xtabs(~term + loan_status, data = loan)), margin = 2)
+```
+
+
+## 9.  The summary all the variables using one command.
+```{r}
+summary(loan)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
